@@ -1,7 +1,9 @@
 ﻿module ICPC
 open System
-
+type Option={
+}
 let commaSprinkler input =
+    
     failwith "Not implemented"
 
 let rivers input =
