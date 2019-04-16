@@ -4,7 +4,22 @@ open System
 let commaSprinkler (input:string) = 
     let text = string input 
     let InputArray = text.Split()
- 
+    let IsText (text:string) = 
+        match text.Length>=1 with 
+        |true -> 
+            let rec checkchar (txt:string) idx =
+                match idx< txt.Length ,(Char.IsLetter(txt.[idx])||txt.[idx]='.'||txt.[idx]=',') with
+                |true,true -> checkchar txt (idx+1)
+                |true,false -> false
+                |false,_-> true
+            match checkchar text 0 with
+            |true -> true       
+            |_ -> false
+        |_ -> false
+
+    //let text = string input 
+    let InputArray = input.Split()
+
     let rec MySplitter (words:string []) acc =  //function for spliting text into array
                  // should return an list (char list )
             let wordslength = words.Length
@@ -32,48 +47,34 @@ let commaSprinkler (input:string) =
             |false,_ -> FindAndAdd tail word x
             |true,_ ->curr //if the next matching word is followed by a full stop then
 
-    let IsText (text:string) =
-        match text.Length=1,text.EndsWith('.') with
-        |true ->
-            true
-        |_ -> false
     //something like for int i=0;i<words.length;i++
     let rec f words  acc=
-        match words with
-        |[]-> None   //base case
-        |curr::tail->  // the idea is to compare curr with everything in tail
-            match curr.ToString().StartsWith(','),curr with 
-            | true,c -> Some (FindAndAdd tail curr 0) //look for other occurences of curr and add , before them
-            |_-> 
-                let curr= string curr
-                match curr.EndsWith(',')&&curr.Length<>1,curr with
-                |true,c-> Some (FindAndAdd tail curr 1) //look for other occurences of curr and add , before them
-                |_,_ ->  f tail (acc+1)       // compare the next word
+        let VerifiedText = IsText words
+        match VerifiedText with   //if input follows all the rules of what is a valid text
+        | false -> None        
+        |true -> 
+             let xs = words.Split(' ')
+             let lst = MySplitter xs 0
+             match lst with
+             |[] -> None// end of list
+             |curr :: tail -> 
+                match curr.EndsWith(','),curr with
+                |true,c ->
+                    let xs = c.Substring(1)
+                    Some (FindAndAdd tail xs 0 )
+                |_ -> None
                 
-                 
-    let TF = MySplitter InputArray 0
-    let results =f TF 0
-    results
-   // failwith "Not implemented"
+        
+        |_ -> None
+    
+    failwith "Not implemented"
+    
+
     
 let rivers input =
-    let list = string input
-    let Array = list.Split(" ")
-    let rec MySplitter (words:string []) acc =  //function for spliting text into array
-                 // should return an list (char list )
-            let wordslength = words.Length
-            match acc<wordslength with
-            |false -> []
-            |true -> 
-                match acc<wordslength,words.[acc] with
-                | true,x ->x::MySplitter words (acc+1)
-                |_ -> []
-            
-    let ans =MySplitter Array 0
-    ans
+    failwith "Not implemented"
    
-
 [<EntryPoint>]
-let main argv =
+let main argv =  
     printfn "Hello World from F#!"
     0 // return an integer exit code
