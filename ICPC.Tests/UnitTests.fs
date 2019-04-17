@@ -17,6 +17,7 @@ let ``Comma sprinkler, input 2`` () =
 let ``Comma sprinkler, input 3`` () =
     commaSprinkler "test." |> should equal (Some "test.")
 
+
 [<Test>]
 let ``Comma sprinkler, error case 1`` () =
     commaSprinkler "" |> should equal None

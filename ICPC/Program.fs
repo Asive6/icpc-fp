@@ -1,5 +1,6 @@
 ﻿module ICPC
 open System
+open System.Diagnostics
 
 let commaSprinkler (input:string) = 
     let text = string input 
@@ -49,32 +50,42 @@ let commaSprinkler (input:string) =
 
     //something like for int i=0;i<words.length;i++
     let rec f words  acc=
-        let VerifiedText = IsText words
-        match VerifiedText with   //if input follows all the rules of what is a valid text
-        | false -> None        
-        |true -> 
-             let xs = words.Split(' ')
-             let lst = MySplitter xs 0
-             match lst with
-             |[] -> None// end of list
-             |curr :: tail -> 
-                match curr.EndsWith(','),curr with
-                |true,c ->
-                    let xs = c.Substring(1)
-                    Some (FindAndAdd tail xs 0 )
-                |_ -> None
+        match words with
+        |[]-> None   //base case
+        |curr::tail->  // the idea is to compare curr with everything in tail
+            match curr.ToString().StartsWith(','),curr with 
+            | true,c -> Some (FindAndAdd tail curr 0) //look for other occurences of curr and add , before them
+            |_-> 
+                let curr= string curr
+                match curr.EndsWith(',')&&curr.Length<>1,curr with
+                |true,c-> Some (FindAndAdd tail curr 1) //look for other occurences of curr and add , before them
+                |_,_ ->  f tail (acc+1)       // compare the next word
                 
-        
-        |_ -> None
-    
-    failwith "Not implemented"
-    
+                 
+    let TF = MySplitter InputArray 0
+    let results =f TF 0
+    results
+   // failwith "Not implemented"
 
-    
-let rivers input =
-    failwith "Not implemented"
+let rivers (input:string) =
+    let xs = input.Split(' ')
+    let result = Array.toList xs
+    let tester a =
+        match a = ""with
+        |true-> false
+        |_ -> true
+
+    let check (text:string) =
+        match List.exists tester result|| xs.Length<=2 || text.EndsWith(' ') ||text.StartsWith(' ')||text.Contains(',')||text.Contains('!') with
+        |true -> None
+        |false -> Some text
+
+    check input
+   // failwith "Not implemented"
    
 [<EntryPoint>]
 let main argv =  
     printfn "Hello World from F#!"
+    let ans = commaSprinkler "one, two. one tree. four tree. four four. five four. six five."
+    
     0 // return an integer exit code
